@@ -27,8 +27,9 @@ exports.createItem = async (req, res) => {
       return res.status(400).json({ message: 'Please set your location in your profile first' });
     }
 
-    // If a photo file was uploaded, build its public URL; otherwise leave null
-    const photoUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    // With Cloudinary storage, req.file.path is the full hosted image URL
+    // (not a local filename) — this is what gets saved to the database.
+    const photoUrl = req.file ? req.file.path : null;
 
     // ===== CREATE ITEM =====
     const item = new Item({
@@ -214,9 +215,9 @@ exports.updateItem = async (req, res) => {
     if (maxBorrowDays) item.maxBorrowDays = maxBorrowDays;
     if (isAvailable !== undefined) item.isAvailable = isAvailable === 'true' || isAvailable === true;
 
-    // Only replace the photo if a new one was uploaded
+    // Only replace the photo if a new one was uploaded (Cloudinary URL)
     if (req.file) {
-      item.photoUrl = `/uploads/${req.file.filename}`;
+      item.photoUrl = req.file.path;
     }
 
     await item.save();
