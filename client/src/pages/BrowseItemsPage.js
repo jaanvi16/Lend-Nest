@@ -17,6 +17,7 @@ export function BrowseItemsPage() {
   // Get user's location and load items on mount
   useEffect(() => {
     loadItems();
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadItems = async () => {
